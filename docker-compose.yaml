@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+
+  # ==========================================
+  # SERVICIO 1: BASE DE DATOS
+  # ==========================================
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: saas_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+
+  # ==========================================
+  # SERVICIO 2: BACKEND
+  # ==========================================
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      DB_HOST: db
+      DB_NAME: saas_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    depends_on:
+      - db
+
+  # ==========================================
+  # SERVICIO 3: FRONTEND
+  # ==========================================
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend

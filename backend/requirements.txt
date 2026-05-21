@@ -1,0 +1,12 @@
+# framework for building APIs
+fastapi==0.115.0
+#Servidior para fastapi
+uvicorn==0.30.6 
+# driver para conectar con PostgreSQL
+psycopg2-binary==2.9.9 
+# maneja los tokens JWT
+python-jose==3.3.0 
+# para hashing de contraseñas
+passlib==1.7.4 
+# permite recibir los datos de los formularios en FastAPI
+python-multipart==0.0.9 
