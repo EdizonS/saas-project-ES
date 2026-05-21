@@ -1,0 +1,39 @@
+# ==========================================
+# PASO 1: CONSTRUIR LA APP DE REACT
+# ==========================================
+FROM node:18-alpine AS build
+
+WORKDIR /app
+
+# Copia el package.json primero (igual que con requirements.txt)
+COPY package*.json ./
+
+# Instala las dependencias de React
+RUN npm install
+
+# Copia el resto del código
+COPY . .
+
+# Construye la app para producción
+RUN npm run build
+
+# ==========================================
+# PASO 2: SERVIR LA APP CON NGINX
+# ==========================================
+FROM nginx:alpine
+
+# Copia los archivos construidos al servidor nginx
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Expone el puerto 80
+EXPOSE 80
+
+# Nginx arranca solo
+FROM nginx:alpine
+
+COPY --from=build /app/build /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 3000
+
+CMD ["nginx", "-g", "daemon off;"]
